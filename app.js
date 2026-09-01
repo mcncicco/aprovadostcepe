@@ -3,6 +3,7 @@ const nomeInput = document.getElementById('nome');
 const nascimentoInput = document.getElementById('nascimento');
 const resultado = document.getElementById('resultado');
 
+const GRUPO_LINK = window.WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/KkRoWs68ZBCGCBOJFSxArB';
 let registros = [];
 
 function normalizeText(value = '') {
@@ -61,18 +62,13 @@ function carregarDados() {
     .then((csvText) => {
       const linhas = parseCSV(csvText);
 
-      if (linhas.length < 2) {
-        throw new Error('O arquivo CSV está vazio ou sem os campos esperados.');
+      if (linhas.length === 0) {
+        throw new Error('O arquivo CSV está vazio.');
       }
 
-      const indiceNome = 1;
-      const indiceData = 2;
-      const indiceLink = linhas[0].findIndex((campo) => /https?:\/\//i.test(String(campo || '')));
-
       registros = linhas.map((linha) => ({
-        nome: linha[indiceNome] || '',
-        nascimento: linha[indiceData] || '',
-        link: indiceLink >= 0 ? (linha[indiceLink] || '') : ''
+        nome: linha[1] || '',
+        nascimento: linha[2] || ''
       }));
     })
     .catch((erro) => {
@@ -88,7 +84,7 @@ function mostrarMensagem(mensagem, tipo = 'success') {
   resultado.innerHTML = mensagem;
 }
 
-async function verificarCadastro(evento) {
+function verificarCadastro(evento) {
   evento.preventDefault();
 
   const nome = nomeInput.value.trim();
@@ -99,34 +95,21 @@ async function verificarCadastro(evento) {
     return;
   }
 
-  nascimentoInput.value = nascimento;
+  const pessoa = registros.find((registro) => {
+    const nomeMatch = normalizeText(registro.nome) === normalizeText(nome);
+    const dataMatch = normalizeDate(registro.nascimento) === nascimento;
+    return nomeMatch && dataMatch;
+  });
 
-  try {
-    const resposta = await fetch('/validar', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        nome,
-        nascimento
-      })
-    });
-
-    const dados = await resposta.json();
-
-    if (!dados.ok) {
-      mostrarMensagem(dados.message || 'Nenhuma pessoa encontrada com esses dados.', 'error');
-      return;
-    }
-
-    mostrarMensagem(
-      `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${dados.link}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
-      'success'
-    );
-  } catch (erro) {
-    mostrarMensagem('Não foi possível verificar o cadastro. Tente novamente.', 'error');
+  if (!pessoa) {
+    mostrarMensagem('Nenhuma pessoa encontrada com esses dados.', 'error');
+    return;
   }
+
+  mostrarMensagem(
+    `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${GRUPO_LINK}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
+    'success'
+  );
 }
 
 form.addEventListener('submit', verificarCadastro);
