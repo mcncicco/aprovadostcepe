@@ -4,7 +4,7 @@ const nascimentoInput = document.getElementById('nascimento');
 const resultado = document.getElementById('resultado');
 const submitButton = form.querySelector('button[type="submit"]');
 
-const GRUPO_LINK = window.WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/KkRoWs68ZBCGCBOJFSxArB';
+const GRUPO_LINK = window.WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/EEDDzjK4ODWBDPmkpJnf2Y';
 let registros = [];
 let carregandoDados = true;
 
