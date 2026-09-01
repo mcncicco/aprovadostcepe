@@ -1,3 +1,13 @@
 data_hora,nome,nascimento,telefone,status,link
 2026-09-01T18:31:34.661Z,Maria Silva,1990-05-10,(11) 99999-9999,ok,https://chat.whatsapp.com/EXEMPLO_GRUPO_1
 2026-09-01T18:31:45.884Z,Maria Silva,1990-05-10,(11) 99999-9999,ok,https://chat.whatsapp.com/EXEMPLO_GRUPO_1
+2026-09-01T18:34:46.242Z,marcelo cicco do nascimento,1999-08-19,81993161719,nao_encontrado,
+2026-09-01T18:34:53.447Z,marcelo cicco do nascimento,1984-08-19,(62) 99999-9999,nao_encontrado,
+2026-09-01T18:34:56.650Z,marcelo cicco do nascimento,1984-08-19,(62) 99999-9999,nao_encontrado,
+2026-09-01T18:35:13.022Z,marcelo cicco do nascimento,1984-03-09,(62) 99999-9999,nao_encontrado,
+2026-09-01T18:35:27.205Z,Marcelo Cicco do Nascimento,1984-03-09,81993161719,nao_encontrado,
+2026-09-01T18:37:06.345Z,MARCELO CICCO DO NASCIMENTO,1984-09-03,81993161719,sem_link,
+2026-09-01T18:37:16.052Z,Marcelo Cicco do Nascimento,1984-09-03,81909316179,sem_link,
+2026-09-01T18:37:37.393Z,MARCELO CICCO DO NASCIMENTO,1984-09-03,81993161719,sem_link,
+2026-09-01T18:37:38.787Z,MARCELO CICCO DO NASCIMENTO,1984-09-03,81993161719,sem_link,
+2026-09-01T18:37:39.522Z,MARCELO CICCO DO NASCIMENTO,1984-09-03,81993161719,sem_link,

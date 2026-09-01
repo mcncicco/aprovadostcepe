@@ -40,33 +40,10 @@ function normalizeDate(value = '') {
 function parseCSV(text) {
   const linhas = text.split(/\r?\n/).filter((linha) => linha.trim() !== '');
   const registrosCSV = [];
+  const delimitador = text.includes(';') ? ';' : ',';
 
   for (const linha of linhas) {
-    let valorAtual = '';
-    let emAspas = false;
-    const linhaProcessada = [];
-
-    for (let i = 0; i < linha.length; i += 1) {
-      const caractere = linha[i];
-
-      if (caractere === '"') {
-        if (emAspas && linha[i + 1] === '"') {
-          valorAtual += '"';
-          i += 1;
-        } else {
-          emAspas = !emAspas;
-        }
-      } else if (caractere === ',' && !emAspas) {
-        linhaProcessada.push(valorAtual);
-        valorAtual = '';
-      } else if ((caractere === '\n' || caractere === '\r') && !emAspas) {
-        break;
-      } else {
-        valorAtual += caractere;
-      }
-    }
-
-    linhaProcessada.push(valorAtual);
+    const linhaProcessada = linha.split(delimitador).map((valor) => valor.trim());
     registrosCSV.push(linhaProcessada);
   }
 
@@ -88,15 +65,14 @@ function carregarDados() {
         throw new Error('O arquivo CSV está vazio ou sem os campos esperados.');
       }
 
-      const cabecalho = linhas[0].map((campo) => normalizeText(campo));
-      const indiceNome = cabecalho.findIndex((campo) => campo.includes('nome'));
-      const indiceData = cabecalho.findIndex((campo) => campo.includes('nascimento') || campo.includes('datanascimento'));
-      const indiceLink = cabecalho.findIndex((campo) => campo.includes('link') || campo.includes('whatsapp') || campo.includes('grupo'));
+      const indiceNome = 1;
+      const indiceData = 2;
+      const indiceLink = linhas[0].findIndex((campo) => /https?:\/\//i.test(String(campo || '')));
 
-      registros = linhas.slice(1).map((linha) => ({
+      registros = linhas.map((linha) => ({
         nome: linha[indiceNome] || '',
         nascimento: linha[indiceData] || '',
-        link: linha[indiceLink] || ''
+        link: indiceLink >= 0 ? (linha[indiceLink] || '') : ''
       }));
     })
     .catch((erro) => {

@@ -6,6 +6,7 @@ const PORT = 3000;
 const ROOT = __dirname;
 const DATA_FILE = path.join(ROOT, 'data.csv');
 const LOG_FILE = path.join(ROOT, 'access_log.csv');
+const DEFAULT_GROUP_LINK = process.env.WHATSAPP_LINK || 'https://chat.whatsapp.com/SEU_GRUPO';
 
 function normalizarTexto(value = '') {
   return String(value).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -25,31 +26,10 @@ function normalizarData(value = '') {
 function parseCSV(texto) {
   const linhas = texto.split(/\r?\n/).filter((linha) => linha.trim() !== '');
   const resultado = [];
+  const delimitador = texto.includes(';') ? ';' : ',';
 
   for (const linha of linhas) {
-    let valorAtual = '';
-    let entreAspas = false;
-    const campos = [];
-
-    for (let i = 0; i < linha.length; i += 1) {
-      const char = linha[i];
-
-      if (char === '"') {
-        if (entreAspas && linha[i + 1] === '"') {
-          valorAtual += '"';
-          i += 1;
-        } else {
-          entreAspas = !entreAspas;
-        }
-      } else if (char === ',' && !entreAspas) {
-        campos.push(valorAtual);
-        valorAtual = '';
-      } else {
-        valorAtual += char;
-      }
-    }
-
-    campos.push(valorAtual);
+    const campos = linha.split(delimitador).map((valor) => valor.trim());
     resultado.push(campos);
   }
 
@@ -145,18 +125,17 @@ function tratarRotas(req, res) {
         }
 
         const linhas = lerCSV(DATA_FILE);
-        if (linhas.length < 2) {
+        if (linhas.length === 0) {
           registrarLog({ nome, nascimento, telefone, status: 'erro', link: '' });
           enviarResposta(res, 404, JSON.stringify({ ok: false, message: 'Nenhuma pessoa encontrada com esses dados.' }), 'application/json; charset=utf-8');
           return;
         }
 
-        const cabecalho = linhas[0].map((campo) => normalizarTexto(campo));
-        const indexNome = cabecalho.findIndex((campo) => campo.includes('nome'));
-        const indexData = cabecalho.findIndex((campo) => campo.includes('nascimento') || campo.includes('datanascimento'));
-        const indexLink = cabecalho.findIndex((campo) => campo.includes('link') || campo.includes('whatsapp') || campo.includes('grupo'));
+        const indexNome = 1;
+        const indexData = 2;
+        const indexLink = linhas[0].findIndex((campo) => /https?:\/\//i.test(String(campo || '')));
 
-        const pessoa = linhas.slice(1).find((linha) => {
+        const pessoa = linhas.find((linha) => {
           const nomeLinha = (linha[indexNome] || '').trim();
           const dataLinha = normalizarData(linha[indexData] || '');
           return normalizarTexto(nomeLinha) === normalizarTexto(nome) && dataLinha === nascimento;
@@ -168,11 +147,11 @@ function tratarRotas(req, res) {
           return;
         }
 
-        const link = pessoa[indexLink] || '';
+        const link = indexLink >= 0 ? (pessoa[indexLink] || '') : DEFAULT_GROUP_LINK;
 
-        if (!link) {
-          registrarLog({ nome, nascimento, telefone, status: 'sem_link', link: '' });
-          enviarResposta(res, 404, JSON.stringify({ ok: false, message: 'Os dados conferem, mas não há link de acesso cadastrado.' }), 'application/json; charset=utf-8');
+        if (!link || link === 'https://chat.whatsapp.com/SEU_GRUPO') {
+          registrarLog({ nome, nascimento, telefone, status: 'sem_link', link: DEFAULT_GROUP_LINK });
+          enviarResposta(res, 200, JSON.stringify({ ok: true, link: DEFAULT_GROUP_LINK, message: 'Dados conferidos; substitua o link padrão pelo convite real do grupo.' }), 'application/json; charset=utf-8');
           return;
         }
 
