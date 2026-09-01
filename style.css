@@ -1,0 +1,116 @@
+:root {
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --primary: #166534;
+  --primary-dark: #14532d;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --danger: #b91c1c;
+  --success: #166534;
+  --border: #dfe7f1;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #eef6ff, var(--bg));
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+}
+
+.container {
+  width: min(92vw, 480px);
+}
+
+h1 {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: clamp(1.7rem, 2vw, 2.3rem);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+label {
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 1rem;
+}
+
+button {
+  margin-top: 8px;
+  border: none;
+  border-radius: 10px;
+  background: var(--primary);
+  color: white;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: var(--primary-dark);
+}
+
+.resultado {
+  margin-top: 18px;
+  min-height: 60px;
+  padding: 18px 16px;
+  border-radius: 12px;
+  background: white;
+  border: 1px solid var(--border);
+  display: none;
+}
+
+.resultado.visible {
+  display: block;
+}
+
+.resultado.success {
+  border-color: rgba(22, 101, 52, 0.45);
+  background: #f0fdf4;
+  color: var(--success);
+}
+
+.resultado.error {
+  border-color: rgba(185, 28, 28, 0.3);
+  background: #fef2f2;
+  color: var(--danger);
+}
+
+.link-whatsapp {
+  display: inline-block;
+  margin-top: 10px;
+  color: white;
+  background: #25d366;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.link-whatsapp:hover {
+  filter: brightness(0.96);
+}

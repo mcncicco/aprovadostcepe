@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validação de Acesso</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Verificar acesso ao grupo</h1>
+
+      <form id="formulario" class="card">
+        <label for="nome">Nome completo</label>
+        <input id="nome" name="nome" type="text" placeholder="Digite o nome" required />
+
+        <label for="nascimento">Data de nascimento</label>
+        <input id="nascimento" name="nascimento" type="date" required />
+
+        <label for="telefone">Número de telefone</label>
+        <input id="telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" required />
+
+        <button type="submit">Verificar</button>
+      </form>
+
+      <div id="resultado" class="resultado" aria-live="polite"></div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
