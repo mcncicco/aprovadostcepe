@@ -25,13 +25,35 @@ body {
 }
 
 .container {
-  width: min(92vw, 480px);
+  width: min(92vw, 520px);
+}
+
+.brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.brand-mark {
+  width: min(78vw, 410px);
+  height: auto;
+  display: block;
 }
 
 h1 {
-  margin-bottom: 20px;
+  margin: 0 0 10px;
   text-align: center;
   font-size: clamp(1.7rem, 2vw, 2.3rem);
+  line-height: 1.15;
+}
+
+.subtitle {
+  margin: 0 0 20px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--muted);
+  font-weight: 600;
 }
 
 .card {
