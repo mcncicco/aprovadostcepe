@@ -42,10 +42,27 @@ function parseCSV(text) {
   const linhas = text.split(/\r?\n/).filter((linha) => linha.trim() !== '');
   const registrosCSV = [];
   const delimitador = text.includes(';') ? ';' : ',';
+  let cargoAtual = '';
 
   for (const linha of linhas) {
-    const linhaProcessada = linha.split(delimitador).map((valor) => valor.trim());
-    registrosCSV.push(linhaProcessada);
+    const linhaTrim = linha.trim();
+
+    if (linhaTrim.startsWith('#CARGO#')) {
+      cargoAtual = linhaTrim.replace(/^#CARGO#/, '').trim();
+      continue;
+    }
+
+    const linhaProcessada = linhaTrim.split(delimitador).map((valor) => valor.trim());
+
+    if (linhaProcessada.length < 3) {
+      continue;
+    }
+
+    registrosCSV.push({
+      cargo: cargoAtual,
+      nome: linhaProcessada[1] || '',
+      nascimento: linhaProcessada[2] || ''
+    });
   }
 
   return registrosCSV;
@@ -66,10 +83,7 @@ function carregarDados() {
         throw new Error('O arquivo CSV está vazio.');
       }
 
-      registros = linhas.map((linha) => ({
-        nome: linha[1] || '',
-        nascimento: linha[2] || ''
-      }));
+      registros = linhas;
     })
     .catch((erro) => {
       mostrarMensagem(
@@ -124,8 +138,13 @@ function verificarCadastro(evento) {
     return;
   }
 
+  const cargo = pessoa.cargo || 'cargo não informado';
+  const mensagem = `Olá Pessoal, me chamo "${nome}" e fui aprovado para o cargo ${cargo}.`;
+  const separador = GRUPO_LINK.includes('?') ? '&' : '?';
+  const linkWhatsapp = `${GRUPO_LINK}${separador}text=${encodeURIComponent(mensagem)}`;
+
   mostrarMensagem(
-    `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${GRUPO_LINK}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
+    `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${linkWhatsapp}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
     'success'
   );
 }
