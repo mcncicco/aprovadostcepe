@@ -19,13 +19,16 @@ body {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #eef6ff, var(--bg));
+  background: linear-gradient(rgba(236, 246, 252, 0.78), rgba(236, 246, 252, 0.78)),
+    url('fundo.png') center center / cover no-repeat fixed;
   font-family: Arial, Helvetica, sans-serif;
   color: var(--text);
 }
 
 .container {
   width: min(92vw, 520px);
+  position: relative;
+  z-index: 1;
 }
 
 .brand {
