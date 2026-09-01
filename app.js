@@ -4,7 +4,6 @@ const nascimentoInput = document.getElementById('nascimento');
 const resultado = document.getElementById('resultado');
 
 const GRUPO_LINK = window.WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/KkRoWs68ZBCGCBOJFSxArB';
-const WHATSAPP_MESSAGE_LINK = 'https://wa.me/?text=';
 let registros = [];
 
 function normalizeText(value = '') {
@@ -141,11 +140,9 @@ function verificarCadastro(evento) {
 
   const cargo = pessoa.cargo || 'cargo não informado';
   const mensagem = `Olá Pessoal, me chamo "${nome}" e fui aprovado para o cargo ${cargo}.`;
-  const linkGrupo = GRUPO_LINK;
-  const linkMensagem = `${WHATSAPP_MESSAGE_LINK}${encodeURIComponent(mensagem)}`;
 
   mostrarMensagem(
-    `Dados confirmados! Clique nos links abaixo para continuar.<br><a class="link-whatsapp" href="${linkGrupo}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a><br><a class="link-whatsapp secondary" href="${linkMensagem}" target="_blank" rel="noopener noreferrer">Enviar mensagem pronta</a>`,
+    `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${GRUPO_LINK}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
     'success'
   );
 }
