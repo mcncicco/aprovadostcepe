@@ -149,6 +149,11 @@ function validarLocalmente(nome, nascimento) {
   );
 }
 
+function podeUsarBackend() {
+  const host = window.location.hostname;
+  return host === 'localhost' || host === '127.0.0.1';
+}
+
 function verificarCadastro(evento) {
   evento.preventDefault();
 
@@ -162,6 +167,11 @@ function verificarCadastro(evento) {
 
   if (!nome || !nascimento) {
     mostrarMensagem('Preencha nome e data de nascimento.', 'error');
+    return;
+  }
+
+  if (!podeUsarBackend()) {
+    validarLocalmente(nome, nascimento);
     return;
   }
 
