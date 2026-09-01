@@ -79,10 +79,28 @@ function carregarDados() {
     });
 }
 
+function formatarDataInput(valor = '') {
+  const apenasDigitos = valor.replace(/\D/g, '').slice(0, 8);
+
+  if (apenasDigitos.length <= 2) {
+    return apenasDigitos;
+  }
+
+  if (apenasDigitos.length <= 4) {
+    return `${apenasDigitos.slice(0, 2)}/${apenasDigitos.slice(2)}`;
+  }
+
+  return `${apenasDigitos.slice(0, 2)}/${apenasDigitos.slice(2, 4)}/${apenasDigitos.slice(4)}`;
+}
+
 function mostrarMensagem(mensagem, tipo = 'success') {
   resultado.classList.add('visible', tipo);
   resultado.innerHTML = mensagem;
 }
+
+nascimentoInput.addEventListener('input', (evento) => {
+  evento.target.value = formatarDataInput(evento.target.value);
+});
 
 function verificarCadastro(evento) {
   evento.preventDefault();
