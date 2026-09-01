@@ -131,6 +131,24 @@ nascimentoInput.addEventListener('input', (evento) => {
   evento.target.value = formatarDataInput(evento.target.value);
 });
 
+function validarLocalmente(nome, nascimento) {
+  const pessoa = registros.find((registro) => {
+    const nomeMatch = normalizeText(registro.nome) === normalizeText(nome);
+    const dataMatch = normalizeDate(registro.nascimento) === nascimento;
+    return nomeMatch && dataMatch;
+  });
+
+  if (!pessoa) {
+    mostrarMensagem('Nenhuma pessoa encontrada com esses dados.', 'error');
+    return;
+  }
+
+  mostrarMensagem(
+    `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${GRUPO_LINK}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
+    'success'
+  );
+}
+
 function verificarCadastro(evento) {
   evento.preventDefault();
 
@@ -157,6 +175,11 @@ function verificarCadastro(evento) {
     .then(async (resposta) => {
       const dados = await resposta.json().catch(() => ({}));
 
+      if (resposta.status === 405 || resposta.status === 404) {
+        validarLocalmente(nome, nascimento);
+        return;
+      }
+
       if (!resposta.ok || !dados.ok) {
         mostrarMensagem(dados.message || 'Nenhuma pessoa encontrada com esses dados.', 'error');
         return;
@@ -168,21 +191,7 @@ function verificarCadastro(evento) {
       );
     })
     .catch(() => {
-      const pessoa = registros.find((registro) => {
-        const nomeMatch = normalizeText(registro.nome) === normalizeText(nome);
-        const dataMatch = normalizeDate(registro.nascimento) === nascimento;
-        return nomeMatch && dataMatch;
-      });
-
-      if (!pessoa) {
-        mostrarMensagem('Nenhuma pessoa encontrada com esses dados.', 'error');
-        return;
-      }
-
-      mostrarMensagem(
-        `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${GRUPO_LINK}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
-        'success'
-      );
+      validarLocalmente(nome, nascimento);
     });
 }
 
