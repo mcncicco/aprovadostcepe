@@ -2,9 +2,17 @@ const form = document.getElementById('formulario');
 const nomeInput = document.getElementById('nome');
 const nascimentoInput = document.getElementById('nascimento');
 const resultado = document.getElementById('resultado');
+const submitButton = form.querySelector('button[type="submit"]');
 
 const GRUPO_LINK = window.WHATSAPP_GROUP_LINK || 'https://chat.whatsapp.com/KkRoWs68ZBCGCBOJFSxArB';
 let registros = [];
+let carregandoDados = true;
+
+function atualizarBotao() {
+  if (!submitButton) return;
+  submitButton.disabled = carregandoDados;
+  submitButton.textContent = carregandoDados ? 'Carregando...' : 'Verificar';
+}
 
 function normalizeText(value = '') {
   return value
@@ -69,6 +77,9 @@ function parseCSV(text) {
 }
 
 function carregarDados() {
+  carregandoDados = true;
+  atualizarBotao();
+
   fetch('data.csv')
     .then((resposta) => {
       if (!resposta.ok) {
@@ -84,8 +95,12 @@ function carregarDados() {
       }
 
       registros = linhas;
+      carregandoDados = false;
+      atualizarBotao();
     })
     .catch((erro) => {
+      carregandoDados = false;
+      atualizarBotao();
       mostrarMensagem(
         `Não foi possível carregar a base de dados. ${erro.message}`,
         'error'
@@ -118,6 +133,11 @@ nascimentoInput.addEventListener('input', (evento) => {
 
 function verificarCadastro(evento) {
   evento.preventDefault();
+
+  if (carregandoDados) {
+    mostrarMensagem('A lista está sendo carregada. Aguarde alguns instantes.', 'error');
+    return;
+  }
 
   const nome = nomeInput.value.trim();
   const nascimento = normalizeDate(nascimentoInput.value);
@@ -167,4 +187,5 @@ function verificarCadastro(evento) {
 }
 
 form.addEventListener('submit', verificarCadastro);
+atualizarBotao();
 carregarDados();
