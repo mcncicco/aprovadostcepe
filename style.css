@@ -136,6 +136,10 @@ button:hover {
   font-weight: 700;
 }
 
+.link-whatsapp.secondary {
+  background: #128c7e;
+}
+
 .link-whatsapp:hover {
   filter: brightness(0.96);
 }
