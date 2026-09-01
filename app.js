@@ -127,24 +127,43 @@ function verificarCadastro(evento) {
     return;
   }
 
-  const pessoa = registros.find((registro) => {
-    const nomeMatch = normalizeText(registro.nome) === normalizeText(nome);
-    const dataMatch = normalizeDate(registro.nascimento) === nascimento;
-    return nomeMatch && dataMatch;
-  });
+  fetch('/validar', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ nome, nascimento })
+  })
+    .then(async (resposta) => {
+      const dados = await resposta.json().catch(() => ({}));
 
-  if (!pessoa) {
-    mostrarMensagem('Nenhuma pessoa encontrada com esses dados.', 'error');
-    return;
-  }
+      if (!resposta.ok || !dados.ok) {
+        mostrarMensagem(dados.message || 'Nenhuma pessoa encontrada com esses dados.', 'error');
+        return;
+      }
 
-  const cargo = pessoa.cargo || 'cargo não informado';
-  const mensagem = `Olá Pessoal, me chamo "${nome}" e fui aprovado para o cargo ${cargo}.`;
+      mostrarMensagem(
+        `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${GRUPO_LINK}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
+        'success'
+      );
+    })
+    .catch(() => {
+      const pessoa = registros.find((registro) => {
+        const nomeMatch = normalizeText(registro.nome) === normalizeText(nome);
+        const dataMatch = normalizeDate(registro.nascimento) === nascimento;
+        return nomeMatch && dataMatch;
+      });
 
-  mostrarMensagem(
-    `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${GRUPO_LINK}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
-    'success'
-  );
+      if (!pessoa) {
+        mostrarMensagem('Nenhuma pessoa encontrada com esses dados.', 'error');
+        return;
+      }
+
+      mostrarMensagem(
+        `Dados confirmados! Clique no link abaixo para entrar no grupo.<br><a class="link-whatsapp" href="${GRUPO_LINK}" target="_blank" rel="noopener noreferrer">Entrar no grupo do WhatsApp</a>`,
+        'success'
+      );
+    });
 }
 
 form.addEventListener('submit', verificarCadastro);
