@@ -8,17 +8,14 @@
   </head>
   <body>
     <main class="container">
-      <h1>Verificar acesso ao grupo</h1>
+      <h1>Verificar acesso ao grupo Aprovados TCE PE</h1>
 
       <form id="formulario" class="card">
         <label for="nome">Nome completo</label>
         <input id="nome" name="nome" type="text" placeholder="Digite o nome" required />
 
         <label for="nascimento">Data de nascimento</label>
-        <input id="nascimento" name="nascimento" type="date" required />
-
-        <label for="telefone">Número de telefone</label>
-        <input id="telefone" name="telefone" type="tel" placeholder="(00) 00000-0000" required />
+        <input id="nascimento" name="nascimento" type="text" inputmode="numeric" placeholder="dd/mm/aaaa" required />
 
         <button type="submit">Verificar</button>
       </form>

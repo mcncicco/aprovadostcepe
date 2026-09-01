@@ -1,15 +1,21 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const config = require('./config');
 
 const PORT = 3000;
 const ROOT = __dirname;
 const DATA_FILE = path.join(ROOT, 'data.csv');
 const LOG_FILE = path.join(ROOT, 'access_log.csv');
-const DEFAULT_GROUP_LINK = process.env.WHATSAPP_LINK || 'https://chat.whatsapp.com/SEU_GRUPO';
+const DEFAULT_GROUP_LINK = process.env.WHATSAPP_LINK || config.whatsappGroupLink;
 
 function normalizarTexto(value = '') {
-  return String(value).trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ');
 }
 
 function normalizarData(value = '') {
@@ -117,16 +123,15 @@ function tratarRotas(req, res) {
         const dados = JSON.parse(body || '{}');
         const nome = String(dados.nome || '').trim();
         const nascimento = normalizarData(dados.nascimento || '');
-        const telefone = String(dados.telefone || '').trim();
 
-        if (!nome || !nascimento || !telefone) {
-          enviarResposta(res, 400, JSON.stringify({ ok: false, message: 'Nome, data de nascimento e telefone são obrigatórios.' }), 'application/json; charset=utf-8');
+        if (!nome || !nascimento) {
+          enviarResposta(res, 400, JSON.stringify({ ok: false, message: 'Nome e data de nascimento são obrigatórios.' }), 'application/json; charset=utf-8');
           return;
         }
 
         const linhas = lerCSV(DATA_FILE);
         if (linhas.length === 0) {
-          registrarLog({ nome, nascimento, telefone, status: 'erro', link: '' });
+          registrarLog({ nome, nascimento, telefone: '', status: 'erro', link: '' });
           enviarResposta(res, 404, JSON.stringify({ ok: false, message: 'Nenhuma pessoa encontrada com esses dados.' }), 'application/json; charset=utf-8');
           return;
         }
@@ -142,20 +147,14 @@ function tratarRotas(req, res) {
         });
 
         if (!pessoa) {
-          registrarLog({ nome, nascimento, telefone, status: 'nao_encontrado', link: '' });
+          registrarLog({ nome, nascimento, telefone: '', status: 'nao_encontrado', link: '' });
           enviarResposta(res, 404, JSON.stringify({ ok: false, message: 'Nenhuma pessoa encontrada com esses dados.' }), 'application/json; charset=utf-8');
           return;
         }
 
-        const link = indexLink >= 0 ? (pessoa[indexLink] || '') : DEFAULT_GROUP_LINK;
+        const link = DEFAULT_GROUP_LINK;
 
-        if (!link || link === 'https://chat.whatsapp.com/SEU_GRUPO') {
-          registrarLog({ nome, nascimento, telefone, status: 'sem_link', link: DEFAULT_GROUP_LINK });
-          enviarResposta(res, 200, JSON.stringify({ ok: true, link: DEFAULT_GROUP_LINK, message: 'Dados conferidos; substitua o link padrão pelo convite real do grupo.' }), 'application/json; charset=utf-8');
-          return;
-        }
-
-        registrarLog({ nome, nascimento, telefone, status: 'ok', link });
+        registrarLog({ nome, nascimento, telefone: '', status: 'ok', link });
         enviarResposta(res, 200, JSON.stringify({ ok: true, link }), 'application/json; charset=utf-8');
       } catch (error) {
         registrarLog({ nome: '', nascimento: '', telefone: '', status: 'erro_json', link: '' });

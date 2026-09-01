@@ -1,7 +1,6 @@
 const form = document.getElementById('formulario');
 const nomeInput = document.getElementById('nome');
 const nascimentoInput = document.getElementById('nascimento');
-const telefoneInput = document.getElementById('telefone');
 const resultado = document.getElementById('resultado');
 
 let registros = [];
@@ -12,7 +11,8 @@ function normalizeText(value = '') {
     .trim()
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ');
 }
 
 function normalizeDate(value = '') {
@@ -92,13 +92,14 @@ async function verificarCadastro(evento) {
   evento.preventDefault();
 
   const nome = nomeInput.value.trim();
-  const nascimento = nascimentoInput.value;
-  const telefone = telefoneInput.value.trim();
+  const nascimento = normalizeDate(nascimentoInput.value);
 
-  if (!nome || !nascimento || !telefone) {
-    mostrarMensagem('Preencha nome, data de nascimento e telefone.', 'error');
+  if (!nome || !nascimento) {
+    mostrarMensagem('Preencha nome e data de nascimento.', 'error');
     return;
   }
+
+  nascimentoInput.value = nascimento;
 
   try {
     const resposta = await fetch('/validar', {
@@ -108,8 +109,7 @@ async function verificarCadastro(evento) {
       },
       body: JSON.stringify({
         nome,
-        nascimento,
-        telefone
+        nascimento
       })
     });
 
